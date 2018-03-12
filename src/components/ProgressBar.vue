@@ -59,7 +59,7 @@
           let percentage = (e.clientX - getElementViewLeft(this.$refs.barWrap)) / barWidth;
           percentage = percentage > 0 ? percentage : 0;
           percentage = percentage < 1 ? percentage : 1;
-          this.$emit('setprogress', percentage*100)
+          this.$emit('setprogress', percentage*100);
         },
         onDocumentMouseUp(e) {
           document.removeEventListener('mouseup', this.onDocumentMouseUp)

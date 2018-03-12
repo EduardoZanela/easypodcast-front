@@ -43,74 +43,57 @@
             <v-icon color="white" v-html="item.icon"></v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <router-link :to="item.to" >
+            <router-link v-if="item.to" :to="item.to" >
               <v-list-tile-title style="margin-top: 8px;" v-text="item.title"></v-list-tile-title>
             </router-link>
+            <v-list-tile-title class="menu-title" @click="singupdialog=true" v-if="!item.to" style="margin-top: 8px;" v-text="item.title"></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
-      <v-dialog v-model="dialog" persistent max-width="500px">
-      <v-btn color="primary" dark slot="activator">Open Dialog</v-btn>
-      <v-card>
-        <v-card-title>
-          <span class="headline">User Profile</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal first name" required></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field
-                  label="Legal last name"
-                  hint="example of persistent helper text"
-                  persistent-hint
-                  required
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field label="Email" required></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field label="Password" type="password" required></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6>
-                <v-select
-                  label="Age"
-                  required
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                ></v-select>
-              </v-flex>
-              <v-flex xs12 sm6>
-                <v-select
-                  label="Interests"
-                  multiple
-                  autocomplete
-                  chips
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                ></v-select>
-              </v-flex>
-            </v-layout>
-          </v-container>
-          <small>*indicates required field</small>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="dialog = false">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     </v-navigation-drawer>
     <v-content>
       <v-container fluid>
         <router-view :parameter="message" />
       </v-container>
     </v-content>
+    <v-dialog v-model="singupdialog" persistent max-width="500px">
+      <v-card>
+        <v-form v-model="valid" ref="form">
+          <v-card-title>
+            <span class="headline">Create your Profile</span>
+          </v-card-title>
+          <p class="error-message" v-if="showerror">
+            <v-icon style="color: red;">fas fa-exclamation-triangle</v-icon>&nbsp
+            {{ showerror }}
+            <br>
+          </p>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+
+                <v-flex xs12>
+                  <v-text-field :rules="nameRules" v-model="userSingup.name" label="Full Name" required></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field :rules="emailRules" v-model="userSingup.email" label="Email" required></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field :rules="passwordRules" v-model="userSingup.password" label="Password" type="password" required></v-text-field>
+                </v-flex>
+
+              </v-layout>
+            </v-container>
+            <small>*indicates required field</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="singupdialog = false">Close</v-btn>
+            <v-btn color="blue darken-1" flat :disabled="!valid"
+                   @click.native="submit; singupdialog = false; singup();">Save</v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
     <v-footer class="mt-8"app>
       <span>&copy; 2017</span>
     </v-footer>
@@ -121,17 +104,44 @@
 <script>
 
   import FixedFooterPlayer from '@/components/FixedFooterPlayer'
+  import UserService from '@/common/user.service'
   export default {
     data () {
       return {
         drawer: false,
-        items: [{
-          icon: 'fa-home',
-          title: 'Home',
-          to: '/'
-        }],
+        singupdialog: false,
+        items: [
+          {
+            icon: 'fa-home',
+            title: 'Home',
+            to: '/',
+            loged: 'all'
+          },
+          {
+            icon: 'fab fa-wpforms',
+            title: 'Sing Up',
+            loged: 'false'
+          }],
         title: 'Easy Podcast',
-        message: ''
+        message: '',
+        userSingup: {
+          name: '',
+          email: '',
+          password: '',
+          birthday: ''
+        },
+        showerror:'',
+        nameRules: [
+          v => !!v || 'Name is required'
+        ],
+        emailRules: [
+          v => !!v || 'E-mail is required',
+          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+        ],
+        passwordRules: [
+          v => !!v || 'Password is required'
+        ],
+        valid: true
       }
     },
     components: {
@@ -140,17 +150,34 @@
     methods: {
       emit(filtro) {
         this.$router.push({ path: '/results', query: { query: filtro }})
+      },
+      singup() {
+        if (this.$refs.form.validate()) {
+          UserService.register(this.userSingup)
+            .then(user => {
+              console.log("registered" + JSON.stringify(user));
+            })
+            .catch(error => {
+              this.singupdialog = true;
+              this.showerror = error.message;
+              console.log("Error Front: " + error.message);
+            })
+        }
       }
     },
     name: 'App'
   }
 </script>
 <style scoped>
-  a {
+  a, .menu-title {
     color: white !important;
     text-decoration: none;
   }
   .mt-8{
     margin-bottom: 8%;
+  }
+  .error-message {
+    color: red;
+    text-align: center;
   }
 </style>
