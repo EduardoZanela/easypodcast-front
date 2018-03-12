@@ -89,7 +89,7 @@
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="singupdialog = false">Close</v-btn>
             <v-btn color="blue darken-1" flat :disabled="!valid"
-                   @click.native="submit; singupdialog = false; singup();">Save</v-btn>
+                   @click.native="singupdialog = false; singup();">Save</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
