@@ -46,7 +46,7 @@
             <router-link v-if="item.to" :to="item.to" >
               <v-list-tile-title style="margin-top: 8px;" v-text="item.title"></v-list-tile-title>
             </router-link>
-            <v-list-tile-title class="menu-title" @click="singupdialog=true" v-if="!item.to" style="margin-top: 8px;" v-text="item.title"></v-list-tile-title>
+            <v-list-tile-title class="menu-title" @click="singupdialog=true;drawer = !drawer"" v-if="!item.to" style="margin-top: 8px;" v-text="item.title"></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -121,6 +121,12 @@
             icon: 'fab fa-wpforms',
             title: 'Sing Up',
             loged: 'false'
+          },
+          {
+            icon: 'fas fa-sign-in-alt',
+            title: 'Login',
+            to: '/login',
+            logged: 'false'
           }],
         title: 'Easy Podcast',
         message: '',
@@ -174,7 +180,7 @@
     text-decoration: none;
   }
   .mt-8{
-    margin-bottom: 8%;
+    margin-bottom: 7%;
   }
   .error-message {
     color: red;
