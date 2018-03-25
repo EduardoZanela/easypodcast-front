@@ -2,8 +2,8 @@
   <v-container grid-list-xl text-xs-center>
     <v-layout row wrap>
       <v-flex md4 >
-        <img width="150%" src="../assets/login-back.jpg" />
-        <p class="text-xs-left">Photo by Jamakassi on Unsplash</p>
+        <img class="login-back" src="../assets/login-back.jpg" />
+        <p class="text-xs-left text-xs-right-small-device-custom">Photo by Jamakassi on Unsplash</p>
       </v-flex>
       <v-flex xs12 md7 lg7 offset-xs0 offset-md1 offset-lg1>
         <v-card dark color="secondary">
@@ -11,6 +11,11 @@
             <p class="text-xs-center font-size">Login</p>
           </v-card-title>
           <v-card-text>
+            <p class="error-message" v-if="showerror">
+              <v-icon style="color: red;">fas fa-exclamation-triangle</v-icon>&nbsp
+              {{ showerror }}
+              <br>
+            </p>
             <v-form v-model="valid" ref="formSignin">
               <v-text-field
                 label="Enter your e-mail"
@@ -37,7 +42,6 @@
     </v-layout>
   </v-container>
 </template>
-corey-blaz-5003-unsplash.jpg
 <script>
   import UserService from '@/common/user.service'
 
@@ -63,13 +67,20 @@ corey-blaz-5003-unsplash.jpg
           if (this.$refs.formSignin.validate()) {
             UserService.signin(this.userSignin)
               .then(user => {
-                console.log("LOGED" + JSON.stringify(user));
+                this.$store.commit('setToken', user.data.token)
+                this.$store.commit('setUser', user.data.user)
+                this.$router.push({path: '/'})
               })
               .catch(error => {
                 this.showerror = error.message;
                 console.log("Error Front: " + error.message);
               })
           }
+        }
+      },
+      created(){
+        if(this.$store.getters.isUserLoggedIn){
+          this.$router.push({path: '/'})
         }
       }
     }
@@ -83,5 +94,16 @@ corey-blaz-5003-unsplash.jpg
   }
   .font-size{
     font-size: 18pt;
+  }
+  .login-back{
+    width: 150%;
+  }
+  @media screen and (max-width: 800px) {
+    .login-back{
+      width: 100%;
+    }
+    .text-xs-right-small-device-custom {
+      text-align: right !important;
+    }
   }
 </style>

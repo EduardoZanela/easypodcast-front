@@ -13,6 +13,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.4",
     "axios": "^0.17.1",
     "font-awesome": "^4.7.0",
     "material-design-icons": "^3.0.1",
@@ -21,7 +22,9 @@
     "vue-axios": "^2.0.2",
     "vue-draggable-resizable": "^1.6.1",
     "vue-router": "^3.0.1",
-    "vuetify": "^0.17.6"
+    "vuetify": "^0.17.6",
+    "vuex": "^3.0.1",
+    "vuex-persistedstate": "^2.5.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

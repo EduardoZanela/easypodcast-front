@@ -49,7 +49,7 @@
               </v-flex>
               <v-flex xs1>
                 <div class="playlist mt-10">
-                  <v-icon medium>fa-home</v-icon>
+                  <v-icon medium>fa fa-list</v-icon>
                 </div>
               </v-flex>
             </v-layout>
